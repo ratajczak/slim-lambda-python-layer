@@ -1,0 +1,10 @@
++++ overrides.py
+@@ -154,6 +154,8 @@
+     Function suitable for decorating the implementation of a NumPy function.
+     """
+ 
++    if dispatcher.__doc__ is None:
++        dispatcher.__doc__ = ""
+     if not ARRAY_FUNCTION_ENABLED:
+         def decorator(implementation):
+             if docs_from_dispatcher:
