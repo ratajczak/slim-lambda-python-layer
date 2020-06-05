@@ -2,25 +2,12 @@ FROM lambci/lambda:build-python3.6
 
 COPY ./requirements.txt /tmp/requirements.txt
 COPY ./numpy-github-issue-13248.patch /tmp
-RUN yum -y update && yum -y install \
-    gcc-gfortran python3-devel openblas openblas-devel lapack lapack-devel && \
-    mkdir -p /build/{lib,python} && \
-    find /usr -name libopenblasp64.so -exec cp {} /build/lib \; && \
-    find /usr -name liblapack.so.3  -exec cp {} /build/lib \; && \
-    yum -y remove gcc-gfortran python3-devel openblas openblas-devel lapack lapack-devel && \
-    yum -y autoremove && \
-    ls /build/lib && \
-    ln -s /build/lib /opt/lib
 
 RUN pip install pytest
 
-# Use "--no-compile" here because "--compile" generates suboptimal .pyc files in __pycache__ folders.
-RUN CFLAGS="-g0 -Os -Wl,--strip-all -I/usr/include:/usr/local/include -L/usr/lib:/usr/local/lib" && \ 
-    pip install \
+RUN pip install \
     --no-cache-dir \
     --no-compile \ 
-    --global-option=build_ext \
-    --global-option="-j 3" \
     -r /tmp/requirements.txt \
     -t /build/python
 
